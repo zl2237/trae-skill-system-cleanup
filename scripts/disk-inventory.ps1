@@ -7,7 +7,7 @@
   powershell -NoProfile -ExecutionPolicy Bypass -File disk-inventory.ps1 -OutDir "$env:USERPROFILE\Desktop\cleanup-report"
 #>
 param([string]$OutDir = "$env:USERPROFILE\Desktop\cleanup-report-$(Get-Date -Format 'yyyyMMdd')",
-      [string]$Home = $env:USERPROFILE)
+      [string]$HomeDir = $env:USERPROFILE)
 $ErrorActionPreference = 'Continue'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 New-Item -ItemType Directory -Path $OutDir -Force | Out-Null
@@ -41,12 +41,12 @@ foreach ($v in $vols) {
 
 # 用户目录二级 + AppData 二级（膨胀源头）
 $homeDirs = @(); $appdataDirs = @()
-foreach ($d in (Get-ChildItem -LiteralPath $Home -Directory -Force -EA SilentlyContinue)) {
+foreach ($d in (Get-ChildItem -LiteralPath $HomeDir -Directory -Force -EA SilentlyContinue)) {
     $st = Get-DirStat $d.FullName
     if ($st.GB -gt 0.05) { $homeDirs += [PSCustomObject]@{ Name = $d.Name; GB = $st.GB } }
 }
 foreach ($sub in 'Local','Roaming') {
-    foreach ($d in (Get-ChildItem -LiteralPath "$Home\AppData\$sub" -Directory -Force -EA SilentlyContinue)) {
+    foreach ($d in (Get-ChildItem -LiteralPath "$HomeDir\AppData\$sub" -Directory -Force -EA SilentlyContinue)) {
         $st = Get-DirStat $d.FullName
         if ($st.GB -gt 0.3) { $appdataDirs += [PSCustomObject]@{ Zone = $sub; Name = $d.Name; GB = $st.GB; LastWrite = $d.LastWriteTime.ToString('yyyy-MM') } }
     }

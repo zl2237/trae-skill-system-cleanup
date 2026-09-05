@@ -7,29 +7,29 @@
   powershell -NoProfile -ExecutionPolicy Bypass -File junk-scan.ps1 -OutDir "$env:USERPROFILE\Desktop\cleanup-report"
 #>
 param([string]$OutDir = "$env:USERPROFILE\Desktop\cleanup-report-$(Get-Date -Format 'yyyyMMdd')",
-      [string]$Home = $env:USERPROFILE)
+      [string]$HomeDir = $env:USERPROFILE)
 $ErrorActionPreference = 'Continue'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 New-Item -ItemType Directory -Path $OutDir -Force | Out-Null
 
 $targets = @(
     @{ Name='Windows临时文件';   Path='C:\Windows\Temp';                          Level='safe' },
-    @{ Name='用户临时文件';      Path="$Home\AppData\Local\Temp";                 Level='safe' },
+    @{ Name='用户临时文件';      Path="$HomeDir\AppData\Local\Temp";                 Level='safe' },
     @{ Name='Windows更新缓存';   Path='C:\Windows\SoftwareDistribution\Download'; Level='safe' },
     @{ Name='传递优化缓存';      Path='C:\ServiceProfiles\NetworkService\AppData\Local\Microsoft\Windows\DeliveryOptimization\Cache'; Level='safe' },
     @{ Name='系统错误报告WER';   Path='C:\ProgramData\Microsoft\Windows\WER';      Level='safe' },
     @{ Name='系统小型转储';      Path='C:\Windows\Minidump';                      Level='safe' },
     @{ Name='内存转储MEMORY';    Path='C:\Windows\MEMORY.DMP';                    Level='safe' },
-    @{ Name='用户崩溃转储';      Path="$Home\AppData\Local\CrashDumps";           Level='safe' },
-    @{ Name='DirectX着色器缓存'; Path="$Home\AppData\Local\D3DSCache";            Level='safe' },
-    @{ Name='缩略图图标缓存';    Path="$Home\AppData\Local\Microsoft\Windows\Explorer"; Level='safe-thumb' },
+    @{ Name='用户崩溃转储';      Path="$HomeDir\AppData\Local\CrashDumps";           Level='safe' },
+    @{ Name='DirectX着色器缓存'; Path="$HomeDir\AppData\Local\D3DSCache";            Level='safe' },
+    @{ Name='缩略图图标缓存';    Path="$HomeDir\AppData\Local\Microsoft\Windows\Explorer"; Level='safe-thumb' },
     @{ Name='Prefetch预读取';    Path='C:\Windows\Prefetch';                      Level='caution' },
     @{ Name='CBS系统日志';       Path='C:\Windows\Logs\CBS';                      Level='caution' },
     @{ Name='回收站';            Path='C:\$Recycle.Bin';                          Level='recycle' },
-    @{ Name='Edge缓存';          Path="$Home\AppData\Local\Microsoft\Edge\User Data\*\Cache";           Level='safe' },
-    @{ Name='Edge代码缓存';      Path="$Home\AppData\Local\Microsoft\Edge\User Data\*\Code Cache";      Level='safe' },
-    @{ Name='Chrome缓存';        Path="$Home\AppData\Local\Google\Chrome\User Data\*\Cache";           Level='safe' },
-    @{ Name='Chrome代码缓存';    Path="$Home\AppData\Local\Google\Chrome\User Data\*\Code Cache";      Level='safe' }
+    @{ Name='Edge缓存';          Path="$HomeDir\AppData\Local\Microsoft\Edge\User Data\*\Cache";           Level='safe' },
+    @{ Name='Edge代码缓存';      Path="$HomeDir\AppData\Local\Microsoft\Edge\User Data\*\Code Cache";      Level='safe' },
+    @{ Name='Chrome缓存';        Path="$HomeDir\AppData\Local\Google\Chrome\User Data\*\Cache";           Level='safe' },
+    @{ Name='Chrome代码缓存';    Path="$HomeDir\AppData\Local\Google\Chrome\User Data\*\Code Cache";      Level='safe' }
 )
 
 $thumbExts = '.db','.tmp'   # 缩略图目录只清这两类，避免误伤
